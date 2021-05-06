@@ -10,6 +10,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.geek.tom.nucleoidextrasvelocity.integrations.CommandsIntegration;
 import me.geek.tom.nucleoidextrasvelocity.integrations.LifecycleIntegration;
+import me.geek.tom.nucleoidextrasvelocity.integrations.ServerIntegration;
 import me.geek.tom.nucleoidextrasvelocity.integrations.client.IntegrationsHandler;
 import me.geek.tom.nucleoidextrasvelocity.integrations.client.NucleoidIntegrationsClient;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.MessageRegistry;
@@ -93,6 +94,9 @@ public class NucleoidExtrasVelocity {
             }
             if (enabled.contains("commands")) {
                 this.integrationsHandler.addIntegration(CommandsIntegration::new);
+            }
+            if (enabled.contains("server")) {
+                this.integrationsHandler.addIntegration(ServerIntegration::new);
             }
         } catch (ObjectMappingException e) {
             this.logger.info("Invalid config", e);
