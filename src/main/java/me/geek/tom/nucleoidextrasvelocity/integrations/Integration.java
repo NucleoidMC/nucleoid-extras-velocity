@@ -4,10 +4,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import io.netty.channel.ChannelFuture;
 import me.geek.tom.nucleoidextrasvelocity.NucleoidExtrasVelocity;
 import me.geek.tom.nucleoidextrasvelocity.integrations.client.IntegrationsHandler;
-import me.geek.tom.nucleoidextrasvelocity.integrations.client.NucleoidIntegrationsClient;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.Message;
-
-import java.util.function.Consumer;
 
 public abstract class Integration {
     private final IntegrationsHandler handler;
