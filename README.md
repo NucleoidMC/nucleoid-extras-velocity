@@ -16,6 +16,12 @@ Replace `plugins/nucleoid-extras-velocity/config.json` with this, and fill in th
             // Allow the backend to send players between servers.
             "server"
         ]
+    },
+    // These are appended onto the server MOTD if the host matches.
+    // Like the velocity motd option, this supports both JSON text components (wrapped in a string)
+    // AND legacy text formatting using &
+    "forced_motds": {
+      "building.example.com": "Building server"
     }
 }
 ```

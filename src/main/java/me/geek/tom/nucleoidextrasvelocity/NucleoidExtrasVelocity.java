@@ -14,6 +14,10 @@ import me.geek.tom.nucleoidextrasvelocity.integrations.ServerIntegration;
 import me.geek.tom.nucleoidextrasvelocity.integrations.client.IntegrationsHandler;
 import me.geek.tom.nucleoidextrasvelocity.integrations.client.NucleoidIntegrationsClient;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.MessageRegistry;
+import me.geek.tom.nucleoidextrasvelocity.status.ServerStatusMessages;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -24,7 +28,9 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Plugin(
         id = "nucleoid-extras-velocity",
@@ -74,8 +80,8 @@ public class NucleoidExtrasVelocity {
         ConfigurationNode integrationsNode = config.getNode("integrations");
 
         String channelName = integrationsNode.getNode("channel_name").getString("proxy");
-        String host = integrationsNode.getNode("host").getString("localhost");
-        int port = integrationsNode.getNode("port").getInt();
+        String integrationsHost = integrationsNode.getNode("host").getString("localhost");
+        int integrationsPort = integrationsNode.getNode("port").getInt();
 
         this.logger.info("Starting integrations client...");
         this.integrationsHandler = new IntegrationsHandler(
@@ -103,6 +109,20 @@ public class NucleoidExtrasVelocity {
             return;
         }
 
+        Map<String, Component> forcedMotds = new HashMap<>();
+
+        for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getNode("forced_motds").getChildrenMap().entrySet()) {
+            if (entry.getKey() instanceof String) {
+                String host = (String) entry.getKey();
+                String motd = entry.getValue().getString();
+                if (motd == null) {
+                    logger.warn("Invalid forced-MOTD for {}: {}", host, entry.getValue());
+                    continue;
+                }
+                forcedMotds.put(host, parseMotd(motd));
+            }
+        }
+
         try {
             configLoader.save(config);
         } catch (IOException e) {
@@ -110,8 +130,10 @@ public class NucleoidExtrasVelocity {
         }
 
         this.integrationsClient = new NucleoidIntegrationsClient(integrationsHandler, this.messageRegistry);
-        this.integrationsClient.connect(new InetSocketAddress(host, port))
+        this.integrationsClient.connect(new InetSocketAddress(integrationsHost, integrationsPort))
                 .addListener(__ -> logger.info("Connected to backend!"));
+
+        this.proxy.getEventManager().register(this, new ServerStatusMessages(forcedMotds));
     }
 
     @Subscribe
@@ -121,6 +143,15 @@ public class NucleoidExtrasVelocity {
             this.integrationsClient.disconnect();
         } catch (Throwable t) {
             t.printStackTrace();
+        }
+    }
+
+    // Mimic the behavior of velocity's motd config option - support both legacy and JSON
+    private static Component parseMotd(String motd) {
+        if (motd.startsWith("{")) {
+            return GsonComponentSerializer.gson().deserialize(motd);
+        } else {
+            return LegacyComponentSerializer.legacy('&').deserialize(motd);
         }
     }
 }
