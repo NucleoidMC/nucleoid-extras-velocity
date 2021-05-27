@@ -5,10 +5,12 @@ import io.netty.channel.ChannelFuture;
 import me.geek.tom.nucleoidextrasvelocity.NucleoidExtrasVelocity;
 import me.geek.tom.nucleoidextrasvelocity.integrations.client.IntegrationsHandler;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.Message;
+import org.slf4j.Logger;
 
 public abstract class Integration {
     private final IntegrationsHandler handler;
     public final String name;
+    protected Logger logger;
 
     protected Integration(IntegrationsHandler handler, String name) {
         this.handler = handler;
@@ -19,7 +21,9 @@ public abstract class Integration {
         return this.handler.send(message);
     }
 
-    public void onRegister(NucleoidExtrasVelocity plugin, ProxyServer proxy) { }
+    public void onRegister(NucleoidExtrasVelocity plugin, ProxyServer proxy) {
+        this.logger = plugin.logger;
+    }
     public void onConnect() { }
     public void onMessage(Message message) { }
     public void onProxyShutdown() { }

@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 public class CommandsIntegration extends Integration {
     private ProxyServer proxy;
     private NucleoidExtrasVelocity plugin;
-    private Logger logger;
     private IntegrationCommandSource source;
 
     public CommandsIntegration(IntegrationsHandler handler) {
@@ -24,8 +23,8 @@ public class CommandsIntegration extends Integration {
 
     @Override
     public void onRegister(NucleoidExtrasVelocity plugin, ProxyServer proxy) {
+        super.onRegister(plugin, proxy);
         this.proxy = proxy;
-        this.logger = plugin.logger;
         this.plugin = plugin;
     }
 

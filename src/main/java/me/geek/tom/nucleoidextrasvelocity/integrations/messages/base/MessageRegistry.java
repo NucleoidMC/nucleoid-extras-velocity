@@ -3,6 +3,7 @@ package me.geek.tom.nucleoidextrasvelocity.integrations.messages.base;
 import com.google.gson.JsonObject;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.chat.CommandMessage;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.chat.IncomingChatMessage;
+import me.geek.tom.nucleoidextrasvelocity.integrations.messages.server.SendServerToServer;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.server.SendToServer;
 
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class MessageRegistry {
         this.messages.put("chat", o -> new IncomingChatMessage());
         this.messages.put("command", CommandMessage::decode);
         this.messages.put("send_to_server", SendToServer::decode);
+        this.messages.put("send_server_to_server", SendServerToServer::decode);
     }
 
     public JsonObject encodeMessage(Message message) {
