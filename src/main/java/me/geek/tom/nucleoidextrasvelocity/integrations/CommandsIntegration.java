@@ -10,7 +10,6 @@ import me.geek.tom.nucleoidextrasvelocity.integrations.messages.chat.CommandMess
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.chat.SystemMessage;
 import net.kyori.text.Component;
 import net.kyori.text.serializer.plain.PlainComponentSerializer;
-import org.slf4j.Logger;
 
 public class CommandsIntegration extends Integration {
     private ProxyServer proxy;
