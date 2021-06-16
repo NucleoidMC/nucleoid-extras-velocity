@@ -51,7 +51,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocatio
 
 task relocateShadowJar(type: ConfigureShadowRelocation) {
     target = tasks.shadowJar
-    prefix = "me.geek.tom.nucleoidextrasvelocity.libs" // Default value is "shadow"
+    prefix = "me.geek.tom.nucleoidextrasvelocity.libs"
 }
 
 tasks.shadowJar.dependsOn tasks.relocateShadowJar
