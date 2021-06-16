@@ -1,5 +1,6 @@
 package me.geek.tom.nucleoidextrasvelocity;
 
+import com.github.tom_the_geek.nac.NucleoidApiClient;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -54,6 +55,7 @@ public class NucleoidExtrasVelocity {
     private final MessageRegistry messageRegistry = new MessageRegistry();
     private NucleoidIntegrationsClient integrationsClient;
     private IntegrationsHandler integrationsHandler;
+    private NucleoidApiClient nucleoidApiClient;
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
@@ -123,6 +125,21 @@ public class NucleoidExtrasVelocity {
             }
         }
 
+        Map<String, String> forcedServerChannels = new HashMap<>();
+        for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getNode("forced_channels").getChildrenMap().entrySet()) {
+            if (entry.getKey() instanceof String) {
+                String host = (String) entry.getKey();
+                String channel = entry.getValue().getString();
+                if (channel == null) {
+                    logger.warn("Invalid forced server channel for {}: {}", host, entry.getValue());
+                    continue;
+                }
+                forcedServerChannels.put(host, channel);
+            }
+        }
+
+        String nucleoidApi = config.getNode("nucleoid_api_base").getString("https://api.nucleoid.xyz/");
+
         try {
             configLoader.save(config);
         } catch (IOException e) {
@@ -133,7 +150,16 @@ public class NucleoidExtrasVelocity {
         this.integrationsClient.connect(new InetSocketAddress(integrationsHost, integrationsPort))
                 .addListener(__ -> logger.info("Connected to backend!"));
 
-        this.proxy.getEventManager().register(this, new ServerStatusMessages(forcedMotds));
+        this.nucleoidApiClient = NucleoidApiClient.builder()
+                .apiBase(nucleoidApi)
+                .build();
+
+        this.proxy.getEventManager().register(this, new ServerStatusMessages(
+                this.logger,
+                forcedMotds,
+                forcedServerChannels,
+                this.nucleoidApiClient
+        ));
     }
 
     @Subscribe
@@ -141,6 +167,7 @@ public class NucleoidExtrasVelocity {
         try {
             this.integrationsHandler.onProxyShutdown();
             this.integrationsClient.disconnect();
+            this.nucleoidApiClient.close();
         } catch (Throwable t) {
             t.printStackTrace();
         }

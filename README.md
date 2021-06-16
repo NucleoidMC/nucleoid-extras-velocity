@@ -22,6 +22,14 @@ Replace `plugins/nucleoid-extras-velocity/config.json` with this, and fill in th
     // AND legacy text formatting using &
     "forced_motds": {
       "building.example.com": "Building server"
+    },
+    // Optional
+    // The base address of a nucleoid-backend web api if self-hosting
+    "nucleoid_api_base": "https://api.nucleoid.xyz",
+    // These are used to show the open games in a list on the server status.
+    // The value of each pair is the backend channel name of the server to query
+    "forced_channels": {
+      "play.example.com": "play"
     }
 }
 ```

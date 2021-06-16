@@ -23,6 +23,10 @@ repositories {
         name = 'spongepowered-repo'
         url = 'https://repo.spongepowered.org/maven'
     }
+    maven {
+        name = 'tomthegeek-repo'
+        url = 'https://maven.tomthegeek.ml/releases/'
+    }
 }
 
 configurations {
@@ -34,12 +38,23 @@ dependencies {
     implementation 'com.velocitypowered:velocity-api:1.1.0'
     annotationProcessor 'com.velocitypowered:velocity-api:1.1.0'
     shade 'io.netty:netty-all:4.1.63.Final'
+    shade('com.github.tom_the_geek:nucleoid-api-client:1.1.0') {
+        exclude module: 'slf4j-api'
+    }
 }
 
 shadowJar {
     configurations = [project.configurations.shade]
-    relocate 'io.netty', 'me.geek.tom.nucleoidextrasvelocity.libs.io.netty'
 }
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
+task relocateShadowJar(type: ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = "me.geek.tom.nucleoidextrasvelocity.libs" // Default value is "shadow"
+}
+
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
