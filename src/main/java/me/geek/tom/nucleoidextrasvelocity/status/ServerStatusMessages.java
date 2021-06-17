@@ -6,6 +6,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.slf4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -15,17 +16,23 @@ import java.util.stream.Collectors;
 
 public class ServerStatusMessages {
     private final Logger logger;
+
     private final Map<String, Component> forcedMotds;
     private final Map<String, String> forcedServerChannels;
+    private final String openGameFormat;
+    private final String noGamesMessage;
+
     private final NucleoidApiClient nucleoidApiClient;
 
     private final Map<String, List<NucleoidGame>> cache = new HashMap<>();
     private final Map<String, Long> lastRefreshTimes = new HashMap<>();
 
-    public ServerStatusMessages(Logger logger, Map<String, Component> forcedMotds, Map<String, String> forcedServerChannels, NucleoidApiClient nucleoidApiClient) {
+    public ServerStatusMessages(Logger logger, Map<String, Component> forcedMotds, Map<String, String> forcedServerChannels, String openGameFormat, String noGamesMessage, NucleoidApiClient nucleoidApiClient) {
         this.logger = logger;
         this.forcedMotds = forcedMotds;
         this.forcedServerChannels = forcedServerChannels;
+        this.openGameFormat = openGameFormat;
+        this.noGamesMessage = noGamesMessage;
         this.nucleoidApiClient = nucleoidApiClient;
     }
 
@@ -63,14 +70,14 @@ public class ServerStatusMessages {
         if (games.isEmpty()) {
             return Collections.singletonList(
                     new ServerPing.SamplePlayer(
-                            "No games are open right now!",
+                            this.convertNoGamesMessage(),
                             UUID.randomUUID()
                     )
             );
         }
 
         return games.stream()
-                .map(game -> game.name + ": " + game.playerCount)
+                .map(game -> this.formatOpenGame(game.name, game.playerCount))
                 .map(s -> new ServerPing.SamplePlayer(s, UUID.randomUUID()))
                 .collect(Collectors.toList());
     }
@@ -100,5 +107,16 @@ public class ServerStatusMessages {
         }
 
         return games;
+    }
+
+    private String convertNoGamesMessage() {
+        return LegacyComponentSerializer.legacySection().serialize(
+                LegacyComponentSerializer.legacyAmpersand().deserialize(this.noGamesMessage));
+    }
+
+    private String formatOpenGame(String name, int playerCount) {
+        return LegacyComponentSerializer.legacySection().serialize(
+                LegacyComponentSerializer.legacyAmpersand().deserialize(this.openGameFormat
+                .replace("$GAME_NAME$", name).replace("$PLAYER_COUNT$", String.valueOf(playerCount))));
     }
 }

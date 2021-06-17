@@ -30,6 +30,13 @@ Replace `plugins/nucleoid-extras-velocity/config.json` with this, and fill in th
     // The value of each pair is the backend channel name of the server to query
     "forced_channels": {
       "play.example.com": "play"
-    }
+    },
+    // Used to format each line of the currently open games in the player list. Supports legacy formatting with '&'
+    // In this example the game name is in blue and bold, and the player count is in gold
+    // $GAME_NAME$ is replaced with the name of the game and $PLAYER_COUNT$ is replaced with the amount of players.
+    "open_game_format": "&9&l$GAME_NAME$&r: &6$PLAYER_COUNT$",
+    // The text shown in the player list when no games are open. Supports legacy formatting with '&'
+    // In this example the message is red.
+    "no_games_message": "&cNo games are open right now!"
 }
 ```

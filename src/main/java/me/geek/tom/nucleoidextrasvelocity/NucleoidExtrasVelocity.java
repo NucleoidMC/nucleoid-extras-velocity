@@ -138,6 +138,9 @@ public class NucleoidExtrasVelocity {
             }
         }
 
+        String openGameFormat = config.getNode("open_game_format").getString("&9&l$GAME_NAME$&r: &6$PLAYER_COUNT$");
+        String noGamesMessage = config.getNode("no_games_message").getString("&cNo games are open right now!");
+
         String nucleoidApi = config.getNode("nucleoid_api_base").getString("https://api.nucleoid.xyz/");
 
         try {
@@ -158,6 +161,8 @@ public class NucleoidExtrasVelocity {
                 this.logger,
                 forcedMotds,
                 forcedServerChannels,
+                openGameFormat,
+                noGamesMessage,
                 this.nucleoidApiClient
         ));
     }
