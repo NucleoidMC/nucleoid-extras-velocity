@@ -48,5 +48,6 @@ public class ExtrasPacketHandler {
         } else {
             this.logger.warn("Received request to move player {} to unknown server: {}", player.getUniqueId(), targetServerName);
         }
+        event.setResult(PluginMessageEvent.ForwardResult.handled());
     }
 }
