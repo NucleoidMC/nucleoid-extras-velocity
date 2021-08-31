@@ -37,6 +37,8 @@ Replace `plugins/nucleoid-extras-velocity/config.json` with this, and fill in th
     "open_game_format": "&9&l$GAME_NAME$&r: &6$PLAYER_COUNT$",
     // The text shown in the player list when no games are open. Supports legacy formatting with '&'
     // In this example the message is red.
-    "no_games_message": "&cNo games are open right now!"
+    "no_games_message": "&cNo games are open right now!",
+    // Allows receiving custom payload packets ('plugin channels') from backend servers to switch players around
+    "enable_switch_packets": false
 }
 ```
