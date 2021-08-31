@@ -3,14 +3,10 @@ package me.geek.tom.nucleoidextrasvelocity.integrations.messages.chat;
 import com.google.gson.JsonObject;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.Message;
 
-public class CommandMessage implements Message {
-    public final String command;
-    public final String sender;
-
-    public CommandMessage(String command, String sender) {
-        this.command = command;
-        this.sender = sender;
-    }
+public record CommandMessage(
+        String command,
+        String sender
+) implements Message {
 
     @Override
     public JsonObject encode() {
@@ -28,13 +24,5 @@ public class CommandMessage implements Message {
     @Override
     public String type() {
         return "command";
-    }
-
-    @Override
-    public String toString() {
-        return "CommandMessage{" +
-                "command='" + command + '\'' +
-                ", sender='" + sender + '\'' +
-                '}';
     }
 }

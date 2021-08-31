@@ -3,16 +3,11 @@ package me.geek.tom.nucleoidextrasvelocity.integrations.messages;
 import com.google.gson.JsonObject;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.Message;
 
-public class HandshakeMessage implements Message {
-    public final String channel;
-    public final String gameVersion;
-    public final ServerType serverType;
-
-    public HandshakeMessage(String channel, String gameVersion, ServerType serverType) {
-        this.channel = channel;
-        this.gameVersion = gameVersion;
-        this.serverType = serverType;
-    }
+public record HandshakeMessage(
+        String channel,
+        String gameVersion,
+        ServerType serverType
+) implements Message {
 
     @Override
     public JsonObject encode() {

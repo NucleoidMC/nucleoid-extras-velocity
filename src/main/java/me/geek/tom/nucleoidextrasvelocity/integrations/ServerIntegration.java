@@ -28,17 +28,17 @@ public class ServerIntegration extends Integration {
     @Override
     public void onMessage(Message message) {
         if (message instanceof SendToServer) {
-            Optional<Player> player = this.proxy.getPlayer(((SendToServer) message).player);
-            Optional<RegisteredServer> server = this.proxy.getServer(((SendToServer) message).targetServer);
+            Optional<Player> player = this.proxy.getPlayer(((SendToServer) message).player());
+            Optional<RegisteredServer> server = this.proxy.getServer(((SendToServer) message).targetServer());
             if (player.isPresent() && server.isPresent()) {
                 player.get().createConnectionRequest(server.get()).fireAndForget();
             }
         } else if (message instanceof SendServerToServer) {
-            String fromServerName = ((SendServerToServer) message).fromServer;
-            String toServerName = ((SendServerToServer) message).toServer;
+            String fromServerName = ((SendServerToServer) message).fromServer();
+            String toServerName = ((SendServerToServer) message).toServer();
             Optional<RegisteredServer> fromServer = this.proxy.getServer(fromServerName);
             Optional<RegisteredServer> toServer = this.proxy.getServer(toServerName);
-            if (!fromServer.isPresent() || !toServer.isPresent()) {
+            if (fromServer.isEmpty() || toServer.isEmpty()) {
                 this.logger.warn("Received request to move players from '{}' to '{}', but a server doesn't exist!", fromServerName, toServerName);
                 return;
             }

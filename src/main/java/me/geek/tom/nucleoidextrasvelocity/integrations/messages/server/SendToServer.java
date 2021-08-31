@@ -5,14 +5,10 @@ import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.Message;
 
 import java.util.UUID;
 
-public class SendToServer implements Message {
-    public final UUID player;
-    public final String targetServer;
-
-    public SendToServer(UUID player, String newServer) {
-        this.player = player;
-        this.targetServer = newServer;
-    }
+public record SendToServer(
+        UUID player,
+        String targetServer
+) implements Message {
 
     @Override
     public JsonObject encode() {

@@ -3,12 +3,9 @@ package me.geek.tom.nucleoidextrasvelocity.integrations.messages.chat;
 import com.google.gson.JsonObject;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.Message;
 
-public class SystemMessage implements Message {
-    private final String content;
-
-    public SystemMessage(String content) {
-        this.content = content;
-    }
+public record SystemMessage(
+        String content
+) implements Message {
 
     @Override
     public JsonObject encode() {

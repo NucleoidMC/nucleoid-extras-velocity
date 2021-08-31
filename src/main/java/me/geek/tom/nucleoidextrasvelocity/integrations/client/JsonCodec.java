@@ -15,7 +15,6 @@ public class JsonCodec extends MessageToMessageCodec<ByteBuf, JsonObject> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, JsonObject msg, List<Object> out) {
-//        System.out.println("send: " + msg);
         ByteBuf buf = Unpooled.wrappedBuffer(GSON.toJson(msg).getBytes(StandardCharsets.UTF_8));
         out.add(buf);
     }
@@ -23,7 +22,6 @@ public class JsonCodec extends MessageToMessageCodec<ByteBuf, JsonObject> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
         JsonObject obj = GSON.fromJson(msg.toString(StandardCharsets.UTF_8), JsonObject.class);
-//        System.out.println("recv: " + obj);
         out.add(obj);
     }
 }

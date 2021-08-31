@@ -15,6 +15,7 @@ import me.geek.tom.nucleoidextrasvelocity.integrations.ServerIntegration;
 import me.geek.tom.nucleoidextrasvelocity.integrations.client.IntegrationsHandler;
 import me.geek.tom.nucleoidextrasvelocity.integrations.client.NucleoidIntegrationsClient;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.MessageRegistry;
+import me.geek.tom.nucleoidextrasvelocity.packets.ExtrasPacketHandler;
 import me.geek.tom.nucleoidextrasvelocity.status.ServerStatusMessages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -38,7 +39,7 @@ import java.util.Map;
         name = "Nucleoid Extras Velocity",
         version = "@version@",
         description = "Integrations and miscellaneous Nucleoid features for the Velocity proxy",
-        url = "https://github.com/NucleoidMC",
+        url = "https://github.com/NucleoidMC/nucleoid-extras-velocity",
         authors = { "Tom_The_Geek" }
 )
 public class NucleoidExtrasVelocity {
@@ -114,8 +115,7 @@ public class NucleoidExtrasVelocity {
         Map<String, Component> forcedMotds = new HashMap<>();
 
         for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getNode("forced_motds").getChildrenMap().entrySet()) {
-            if (entry.getKey() instanceof String) {
-                String host = (String) entry.getKey();
+            if (entry.getKey() instanceof String host) {
                 String motd = entry.getValue().getString();
                 if (motd == null) {
                     logger.warn("Invalid forced-MOTD for {}: {}", host, entry.getValue());
@@ -127,8 +127,7 @@ public class NucleoidExtrasVelocity {
 
         Map<String, String> forcedServerChannels = new HashMap<>();
         for (Map.Entry<Object, ? extends ConfigurationNode> entry : config.getNode("forced_channels").getChildrenMap().entrySet()) {
-            if (entry.getKey() instanceof String) {
-                String host = (String) entry.getKey();
+            if (entry.getKey() instanceof String host) {
                 String channel = entry.getValue().getString();
                 if (channel == null) {
                     logger.warn("Invalid forced server channel for {}: {}", host, entry.getValue());
@@ -142,6 +141,8 @@ public class NucleoidExtrasVelocity {
         String noGamesMessage = config.getNode("no_games_message").getString("&cNo games are open right now!");
 
         String nucleoidApi = config.getNode("nucleoid_api_base").getString("https://api.nucleoid.xyz/");
+
+        boolean enableSwitchPackets = config.getNode("enable_switch_packets").getBoolean(false);
 
         try {
             configLoader.save(config);
@@ -165,6 +166,10 @@ public class NucleoidExtrasVelocity {
                 noGamesMessage,
                 this.nucleoidApiClient
         ));
+
+        if (enableSwitchPackets) {
+            this.proxy.getEventManager().register(this, new ExtrasPacketHandler(this.logger, this.proxy));
+        }
     }
 
     @Subscribe

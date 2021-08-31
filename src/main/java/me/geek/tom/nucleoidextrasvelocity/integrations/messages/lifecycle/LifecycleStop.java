@@ -3,12 +3,9 @@ package me.geek.tom.nucleoidextrasvelocity.integrations.messages.lifecycle;
 import com.google.gson.JsonObject;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.Message;
 
-public class LifecycleStop implements Message {
-    private final boolean crash;
-
-    public LifecycleStop(boolean crash) {
-        this.crash = crash;
-    }
+public record LifecycleStop(
+        boolean crash
+) implements Message {
 
     @Override
     public JsonObject encode() {

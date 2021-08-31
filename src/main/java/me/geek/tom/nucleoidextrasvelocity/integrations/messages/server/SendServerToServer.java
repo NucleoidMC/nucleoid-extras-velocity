@@ -3,14 +3,10 @@ package me.geek.tom.nucleoidextrasvelocity.integrations.messages.server;
 import com.google.gson.JsonObject;
 import me.geek.tom.nucleoidextrasvelocity.integrations.messages.base.Message;
 
-public class SendServerToServer implements Message {
-    public final String fromServer;
-    public final String toServer;
-
-    public SendServerToServer(String fromServer, String toServer) {
-        this.fromServer = fromServer;
-        this.toServer = toServer;
-    }
+public record SendServerToServer(
+        String fromServer,
+        String toServer
+) implements Message {
 
     @Override
     public JsonObject encode() {

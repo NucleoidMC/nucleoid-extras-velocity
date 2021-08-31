@@ -39,7 +39,7 @@ public class CommandsIntegration extends Integration {
         if (message instanceof CommandMessage) {
             this.proxy.getScheduler().buildTask(this.plugin, () -> {
                 CommandMessage command = (CommandMessage) message;
-                String cmd = command.command;
+                String cmd = command.command();
 
                 // the velocity shutdown command has a very stupid behaviour - the command source
                 // MUST be == proxy.getConsoleCommandSource() or else the command fails. Its not
@@ -58,7 +58,7 @@ public class CommandsIntegration extends Integration {
                     }
                 }).exceptionally(ex -> {
                     this.send(new SystemMessage("Failed to execute command, see the proxy log for info."));
-                    this.logger.error("Failed to execute command: " + cmd + " (triggered by: " + command.sender + ")", ex);
+                    this.logger.error("Failed to execute command: " + cmd + " (triggered by: " + command.sender() + ")", ex);
                     return null;
                 });
             }).schedule();
